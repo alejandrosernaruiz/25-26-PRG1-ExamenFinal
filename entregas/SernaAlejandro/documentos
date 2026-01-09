@@ -4,7 +4,7 @@ public class SimuladorCajero {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         double saldo = 1000.0; // saldo
-        double si = s;
+        double si = saldo;
         int numero_opciones = 0; 
         double total_retirado = 0; 
         double total_depositado = 0; 
@@ -21,12 +21,12 @@ public class SimuladorCajero {
         int hist_idx = 0;
 
         System.out.println("Cajero Automatico - Banco Nacional");
-        System.out.println("Saldo inicial: " + s + " euros");
+        System.out.println("Saldo inicial: " + saldo + " euros");
 
         while (true) {
             System.out.println();
             System.out.println("[1] Consultar saldo");
-            System.out.println("[2] Retirar dinero (comision: " + com + " eur)");
+            System.out.println("[2] Retirar dinero (comision: " + comision + " eur)");
             System.out.println("[3] Depositar dinero");
             System.out.println("[4] Ver estadisticas");
             System.out.println("[5] Salir");
@@ -37,24 +37,24 @@ public class SimuladorCajero {
             int o = sc.nextInt();
 
             if (o == 1) {
-                System.out.println("Tu saldo actual es: " + s + " euros");
+                System.out.println("Tu saldo actual es: " + saldo + " euros");
             } else if (o == 2) {
                 System.out.print("Cuanto deseas retirar? ");
                 double c = sc.nextDouble();
                 if (c <= 0) {
                     System.out.println("Cantidad invalida.");
-                } else if (r_hoy + c > lim_d) {
-                    System.out.println("ERROR: Has superado tu limite de retiro diario de " + lim_d + " euros.");
-                    System.out.println("Has retirado hoy: " + r_hoy + " euros.");
-                } else if (s < c + com) {
-                    System.out.println("Saldo insuficiente (necesitas " + (c + com) + " euros).");
+                } else if (retirado_hoy + c > limite_diario) {
+                    System.out.println("ERROR: Has superado tu limite de retiro diario de " + limite_diario + " euros.");
+                    System.out.println("Has retirado hoy: " + retirado_hoy + " euros.");
+                } else if (saldo < c + comision) {
+                    System.out.println("Saldo insuficiente (necesitas " + (c + comision) + " euros).");
                 } else {
-                    s = s - (c + com);
-                    tr = tr + c;
-                    r_hoy = r_hoy + c;
-                    com_tot = com_tot + com;
-                    n++;
-                    System.out.println("Operacion exitosa. Nuevo saldo: " + s + " euros");
+                    saldo = saldo - (c + comision);
+                    total_retirado = total_retirado + c;
+                    retirado_hoy = retirado_hoy + c;
+                    comision_total = comision_total + comision;
+                    numero_opciones++;
+                    System.out.println("Operacion exitosa. Nuevo saldo: " + saldo + " euros");
                     if (hist_idx < 10) {
                         hist_t[hist_idx] = "Retiro";
                         hist_m[hist_idx] = c;
@@ -65,10 +65,10 @@ public class SimuladorCajero {
                 System.out.print("Cuanto deseas depositar? ");
                 double c = sc.nextDouble();
                 if (c > 0) {
-                    s = s + c;
+                    saldo = saldo + c;
                     // El total depositado (td) no se actualiza (pendiente corregirlo!!!)
-                    n++;
-                    System.out.println("Operacion exitosa. Nuevo saldo: " + s + " euros");
+                    numero_opciones++;
+                    System.out.println("Operacion exitosa. Nuevo saldo: " + saldo + " euros");
                     if (hist_idx < 10) {
                         hist_t[hist_idx] = "Deposito";
                         hist_m[hist_idx] = c;
@@ -80,13 +80,13 @@ public class SimuladorCajero {
             } else if (o == 4) {
                 System.out.println();
                 System.out.println("Estadisticas de tu cuenta:");
-                System.out.println("- Operaciones realizadas: " + n);
-                System.out.println("- Total retirado: " + tr + " euros");
-                System.out.println("- Total depositado: " + td + " euros");
-                System.out.println("- Total comisiones: " + com_tot + " euros");
-                System.out.println("- Saldo neto (operaciones): " + (td - tr) + " euros");
+                System.out.println("- Operaciones realizadas: " + numero_opciones);
+                System.out.println("- Total retirado: " + total_retirado + " euros");
+                System.out.println("- Total depositado: " + total_depositado + " euros");
+                System.out.println("- Total comisiones: " + comision_total + " euros");
+                System.out.println("- Saldo neto (operaciones): " + (total_depositado - total_retirado) + " euros");
                 System.out.println("- Saldo inicial era: " + si + " euros");
-                if (s == si + td - tr - com_tot) {
+                if (s == si + total_depositado - total_retirado - comision_total) {
                     System.out.println("- Estado de cuenta: CORRECTO");
                 } else {
                     System.out.println("- Estado de cuenta: INCONSISTENTE");
@@ -111,7 +111,7 @@ public class SimuladorCajero {
                 hist_idx = 0;
                 System.out.println("Historial de movimientos borrado.");
             } else if (o == 0) {
-                r_hoy = 0.0;
+                retirado_hoy = 0.0;
                 System.out.println("Simulando avance de dia. Tu limite de retiro se ha reiniciado.");
             } else {
                 System.out.println("Opcion no valida. Intenta de nuevo.");
